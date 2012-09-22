@@ -68,7 +68,7 @@ def load_archive(idx):
 		
 		# Go one step back...
 		try:
-			a = iter(archive.Archive(sys.argv[idx]))
+			a = iter(archive.Archive(archives[idx]))
 		except archive.core.Error:
 			# Shouldn't happen.
 			# Go back to the one that didn't fail.
@@ -130,7 +130,7 @@ def load_prev_image():
 		position -= 1
 	
 		try:
-			a = iter(archive.Archive(sys.argv[archive_index]))
+			a = iter(archive.Archive(archives[archive_index]))
 		except archive.core.Error:
 			# This is really bad :/
 			# Skip to next archive.
