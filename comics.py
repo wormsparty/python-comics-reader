@@ -13,55 +13,119 @@ import pyglet
 import sys
 import io
 
+# We can specify any number of archives, 
+# read one after another
 if len(sys.argv) == 1:
 	print("Usage: " + sys.argv[0] + " (archive)+")
 	sys.exit(1)
 
-idx = 1
+# The current archive instance and archive number.
 a = None
+archive_index = 0
 
-def load_next_archive():
-	global idx
+# Call to read the archive associated with 'idx'.
+def load_archive(idx):
 	global a
+	global position
+	global archive_index
 
-	if idx < len(sys.argv):
-		a = iter(archive.Archive(sys.argv[idx]))
-		idx += 1
-	else:
+	# By going back the program doesn't exit if it reached the end.
+	if idx < 1:
+		idx = 1
+
+	# Don't read futher than you can!		
+	if idx >= len(sys.argv):
 		print("Done :)")
 		sys.exit(0)
 
-load_next_archive()
+	a = iter(archive.Archive(sys.argv[idx]))
+		
+	if idx < archive_index:
+		# Here it's a bit hard, since we need to
+		# know how many entries there are. pyarchive
+		# doesn't look like it provised a 'len' field, so...
+		try:
+			while True:
+				a.__next__()
+				position += 1
+		except StopIteration:
+			position -= 2
+		
+		# Go one step back...
+		a = iter(archive.Archive(sys.argv[idx]))
+			
+		for x in range(0, position):
+			a.__next__()
+	else:
+		position = 0
+
+	archive_index = idx
+
+# Load the first archive.
+# Since there indexes are for sys.argv, they begin at 1.
+load_archive(1)
 
 # Initialize graphics
 window = pyglet.window.Window(fullscreen=True)
 img = None
 
-def load_next_image():
+def load_image(buff, filename):
 	global img
+
+	# Since the images are taller than large, we need to rotate them
+	# by 90° to be visible on monitors, which are wider than tall.
+	f = io.BytesIO(buff)
+	img = pyglet.sprite.Sprite(pyglet.image.load(filename, file=f))
+	img.scale = float(window.height) / float(img.image.width)
+	img.set_position(img.image.height * img.scale, 0)
+	img.rotation = -90.0
+
+def load_next_image():
 	global a
+	global position
 
 	try:
 		element = a.__next__()
-		print("Loading " + element.filename)
+		position += 1
 	except StopIteration:
-		load_next_archive()
+		load_archive(archive_index + 1)
 		load_next_image()
 		return
 
-	buff = element.read()	
+	buff = element.read()
 
 	if len(buff) > 0:
-		f = io.BytesIO(buff)
-		img = pyglet.sprite.Sprite(pyglet.image.load(element.filename, file=f))
-		img.scale = float(window.height) / float(img.image.width)
-		img.set_position(img.image.height * img.scale, 0)
-		img.rotation = -90.0
+		load_image(buff, element.filename)
 	else:
-		load_next_image()
+		load_next_image()	
 
+def load_prev_image():
+	global a
+	global position
+	global idx
+	
+	if position <= 1:
+		load_archive(archive_index - 1)
+		load_next_image()
+	else:
+		position -= 1
+		a = iter(archive.Archive(sys.argv[archive_index]))
+		element = a.__next__()
+
+		for i in range(1, position):
+			element = a.__next__()
+
+		buff = element.read()
+		
+		if len(buff) > 0:
+			load_image(buff, element.filename)
+		else:
+			load_prev_image()
+
+# Load the first image of the archive.
 load_next_image()
 
+# Just the callbacks we need for pyglet.
 @window.event
 def on_draw():
 	window.clear()
@@ -71,9 +135,15 @@ def on_draw():
 
 @window.event
 def on_key_press(symbol, modifiers):
-	if symbol == pyglet.window.key.Q:
+	# 'q' or escape exit.
+	if symbol == pyglet.window.key.Q or symbol == pyglet.window.key.ESCAPE:
 		sys.exit(0)
+	# Only left gets the previous one.
+	elif symbol == pyglet.window.key.LEFT:
+		load_prev_image()
+	# All others go to the next image.
 	else:
 		load_next_image()
 
+# And go!
 pyglet.app.run()

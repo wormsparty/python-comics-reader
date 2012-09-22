@@ -1,22 +1,37 @@
+
 Description
 -----------
 
 A comics reader, as simple as it should be.
 
-It can load any archive supported by libarchive.
-It can read any image format supported by pyglet.
-The window is fullscreen and it goes to the next image on any key stroke.
+The window is fullscreen and displays the image to fit correctly rotated 90° to the left.
+
+The program will read all archives passed as argument after another. 
+
+The program exits when you read the last frame of the last archive.
+
+
+Keys
+----
+
+- To go to the next image, hit on any key stroke but Q, escape, and left.
+- Left allows to go back one frame, or the the previous archive.
+- Q and escape exit the program.
+
 
 Dependencies
 ------------
 
 - python3
 - pyarchive
-- pyglet
+- pyglet (as of writing, need alpha version for python3 support)
 
 
-TODO
+BUGS 
 ----
 
-- Be able to go backwards.
+Pyarchive segfaults if you pass a non-archive file as argument.
+
+As of writing, pyglet alpha is requiered for python3 support,
+but doesn't work on Mac OS X :/
 
