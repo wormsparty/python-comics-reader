@@ -2,13 +2,10 @@
 Description
 -----------
 
-A comics reader, as simple as it should be.
-
-The window is fullscreen and displays the image to fit correctly rotated 90° to the left.
-
-The program will read all archives passed as argument after another. 
-
-The program exits when you read the last frame of the last archive.
+- A comics reader, as simple as it should be.
+- The window is fullscreen and displays the image to fit correctly rotated 90° to the left.
+- The program will read all archives passed as argument after another. 
+- The program exits when you read the last frame of the last archive.
 
 
 Keys
@@ -30,8 +27,7 @@ Dependencies
 BUGS 
 ----
 
-Pyarchive segfaults if you pass a non-archive file as argument.
-
-As of writing, pyglet alpha is requiered for python3 support,
-but doesn't work on Mac OS X :/
+- Pyarchive segfaults if you pass a non-archive file as argument.
+- As of writing, pyglet alpha is requiered for python3 support,
+  but doesn't work on Mac OS X :/
 
