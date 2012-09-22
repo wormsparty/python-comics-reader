@@ -27,7 +27,6 @@ Dependencies
 BUGS 
 ----
 
-- Pyarchive segfaults if you pass a non-archive file as argument.
 - As of writing, pyglet alpha is requiered for python3 support,
   but doesn't work on Mac OS X :/
 
