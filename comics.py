@@ -1,5 +1,13 @@
 #!/usr/bin/python3
 
+#
+# Copyright (C) 2012 Marc-Olivier Bloch <wormsparty [at] gmail [dot] com>
+#
+# This program is a free software: you can redistribute it 
+# and/or modify it under the terms of the 'New BSD License'.
+# See COPYING for more information.
+#
+
 import archive
 import pyglet
 import sys
