@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 #
 # Copyright (C) 2012 Marc-Olivier Bloch <wormsparty [at] gmail [dot] com>
@@ -27,7 +27,7 @@ for i in sys.argv[1:]:
 		archive.Archive(i)
 		archives.append(i)
 	except archive.core.Error:
-		print(i + " doesn't to be an archive.")
+		print(i + " doesn't seem to be an archive.")
 
 # The current archive instance and archive number.
 a = None
@@ -52,7 +52,7 @@ def load_archive(idx):
 		a = iter(archive.Archive(archives[idx]))
 	except archive.core.Error:
 		# Shouldn't happen since we already checked the existence of
-		# the file. If this happens, at least dont crash!
+		# the file. If this happens, at least don't crash!
 		load_archive(idx + 1)
 
 	if idx < archive_index:
@@ -92,7 +92,7 @@ def load_image(buff, filename):
 	global img
 
 	# Since the images are taller than large, we need to rotate them
-	# by 90° to be visible on monitors, which are wider than tall.
+	# by 90 degrees to be visible on monitors, which are wider than tall.
 	f = io.BytesIO(buff)
 	img = pyglet.sprite.Sprite(pyglet.image.load(filename, file=f))
 	img.scale = float(window.height) / float(img.image.width)
@@ -151,7 +151,7 @@ def load_prev_image():
 # Load the first image of the archive.
 load_next_image()
 
-# Just the callbacks we need for pyglet.
+# The callbacks we need for pyglet.
 @window.event
 def on_draw():
 	window.clear()
@@ -164,12 +164,12 @@ def on_key_press(symbol, modifiers):
 	# 'q' or escape exit.
 	if symbol == pyglet.window.key.Q or symbol == pyglet.window.key.ESCAPE:
 		sys.exit(0)
-	# Only left gets the previous one.
+	# Left gets the previous image.
 	elif symbol == pyglet.window.key.LEFT:
 		load_prev_image()
-	# All others go to the next image.
+	# All other keys go to the next image.
 	else:
 		load_next_image()
 
-# And go!
+# Go!
 pyglet.app.run()
